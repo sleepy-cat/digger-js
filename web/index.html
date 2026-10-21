@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Digger</title>
+  <link rel="icon" href="data:,">
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #000;
+      color: #888;
+      font: 13px/1.5 monospace;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    canvas {
+      width: min(96vw, calc((100vh - 80px) * 1.6));
+      aspect-ratio: 640 / 400;
+      image-rendering: pixelated;
+    }
+    p {
+      margin: 0 16px;
+      text-align: center;
+    }
+    kbd {
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="screen"></canvas>
+  <p>
+    <kbd>Arrows</kbd> move, <kbd>F1</kbd>/<kbd>Ctrl</kbd>/<kbd>Enter</kbd> fire &middot;
+    player 2: <kbd>W A Z S</kbd>, <kbd>Tab</kbd> &middot;
+    <kbd>N</kbd> game mode &middot; <kbd>Space</kbd> pause &middot; <kbd>Esc</kbd> quit &middot;
+    <kbd>F7</kbd> music &middot; <kbd>F9</kbd> sound &middot; <kbd>+</kbd>/<kbd>-</kbd> speed
+  </p>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
