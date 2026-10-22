@@ -8,6 +8,7 @@ HTML and JavaScript, with a small Go server, in steps:
 | [v00_hello_word](v00_hello_word)  | the game in the browser, high scores on the server |
 | [v01_drf](v01_drf)                | plus recording and playback of games (DRF files)   |
 | [v03_edrf](v03_edrf)              | plus the newer eDRF format, checked as it plays    |
+| [v04_ws](v04_ws)                  | plus network games over WebSocket                  |
 
 Each has a README of its own on how to run it.
 
