@@ -20,7 +20,10 @@ import {
 import { TitleAnim, TITLE_ANIM_LAST_FRAME } from './title.js';
 import * as rec from './record.js';
 
-const gamedat = [{ level: 1, levdone: false }, { level: 1, levdone: false }];
+// The level of each player. Player 2's is 0 in a one player game, as in the
+// original (its levels are set up too, and some of what that sets is shared,
+// as the time the gold of a broken bag lasts on level 1).
+const gamedat = [{ level: 0, levdone: false }, { level: 0, levdone: false }];
 
 let levnotdrawn = false;
 let alldead = false;

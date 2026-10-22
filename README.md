@@ -7,6 +7,7 @@ HTML and JavaScript, with a small Go server, in steps:
 |-----------------------------------|----------------------------------------------------|
 | [v00_hello_word](v00_hello_word)  | the game in the browser, high scores on the server |
 | [v01_drf](v01_drf)                | plus recording and playback of games (DRF files)   |
+| [v03_edrf](v03_edrf)              | plus the newer eDRF format, checked as it plays    |
 
 Each has a README of its own on how to run it.
 
@@ -22,7 +23,7 @@ this directory, with the sources of the original next to it in `../digger`:
 The image with what it takes to build it (Debian, CMake, Clang, SDL2, zlib),
 made once:
 
-    docker build -t digger-reference v01_drf/tests/reference
+    docker build -t digger-reference v03_edrf/tests/reference
 
 The build, with the sources mounted read-only and the result in `build/`:
 
@@ -44,7 +45,7 @@ The results of the recordings of the original are in
 `../digger/tests/results`. To play a set of recordings in both the original
 and the port and compare, all of the above done in one go:
 
-    v01_drf/tests/reference/compare.sh ../digger ../digger/tests/data
+    v03_edrf/tests/reference/compare.sh ../digger ../digger/tests/data
 
 The image is about 1 GB; `docker rmi digger-reference` removes it, and
 `rm -rf build` the build.
