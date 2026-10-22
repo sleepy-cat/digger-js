@@ -6,7 +6,7 @@ import * as snd from './sound.js';
 import {
   dg, DIR_NONE, DIR_RIGHT, DIR_UP, DIR_LEFT, DIR_DOWN, DIGGERS, MWIDTH,
   MHEIGHT, MSIZE, FIRSTBONUS, FIRSTBAG, FIRSTDIGGER, FIRSTFIREBALL, FIRSTMONSTER,
-  DEFAULT_FTIME, reversedir, div,
+  GAUNTLET_TICK, reversedir, div,
 } from './state.js';
 import {
   drawdigger, drawfire, drawbonus, drawemerald, eraseemerald, eatfield,
@@ -79,7 +79,6 @@ function placedigger(n) {
   d.bagtime = 0;
   d.alive = true;
   d.dead = false;
-  d.canfire = true;
   d.deathstage = DEATH_BAG;
   d.dirgetime = 0;
   d.notfiring = true;
@@ -112,6 +111,8 @@ export function initdigger() {
       continue;
     }
     placedigger(n);
+    d.canfire = true; // but as it was when it comes back after a death
+    d.bob = { expsn: 0, dir: DIR_RIGHT, x: 0, y: 0 };
     d.invin = false;
     d.ivt = 0;
     deathffwd = false;
@@ -135,9 +136,9 @@ export function dodigger() {
   if (dg.escape || dg.timeout) return;
   if (dg.gauntlet) {
     drawlives();
-    // The clock counts ticks of the default speed, however fast the game runs
-    if (dg.cgtime < DEFAULT_FTIME) dg.timeout = true;
-    dg.cgtime -= DEFAULT_FTIME;
+    // The clock counts ticks, however fast the game runs
+    if (dg.cgtime < GAUNTLET_TICK) dg.timeout = true;
+    dg.cgtime -= GAUNTLET_TICK;
   }
   for (let n = dg.curplayer; n < dg.diggers + dg.curplayer; n++) {
     const d = digdat[n];
@@ -484,7 +485,7 @@ function diggerdie(n) {
         d.deathtime--;
         break;
       }
-      if (dg.diggers === 1 && (d.dirgetime !== 0 || snd.dirgeplaying())) break;
+      if (dg.diggers === 1 && d.dirgetime !== 0) break;
       deathffwd = false;
       d.dead = true;
       if (digdat.slice(0, dg.diggers).every((x) => x.dead)) {
@@ -510,6 +511,14 @@ function diggerdie(n) {
     case DEATH_DONE:
       break;
   }
+}
+
+// Whether the death of the Digger ends on this tick, which waits for the
+// dirge to be over first: how long the sound takes doesn't change the game.
+export function dirgehold() {
+  const d = digdat[dg.curplayer];
+  return dg.diggers === 1 && !d.alive && d.deathstage === DEATH_TOMBSTONE &&
+    d.deathtime === 0 && d.dirgetime <= 1;
 }
 
 export function createbonus() {

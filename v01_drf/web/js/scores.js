@@ -2,17 +2,25 @@
 
 import * as scr from './screen.js';
 import * as snd from './sound.js';
-import { dg, DIGGERS } from './state.js';
+import { dg, DIGGERS, GAUNTLET_SECOND } from './state.js';
 import { outtext, erasetext, drawlives } from './drawing.js';
 import { getlives, addlife } from './digger.js';
 import { newframe, cleartopline, incpenalty, sleep } from './main.js';
 import { kbhit, getkey } from './input.js';
+import { recputinit } from './record.js';
 
-const BONUS_SCORE = 20000;
 const TABLE_SIZE = 10;
 
-// The score of each Digger, and the next one to get a life at.
-const scdat = Array.from({ length: DIGGERS }, () => ({ score: 0, nextbs: 0 }));
+// The score for an extra life, a recording can have its own.
+export let bonusscore = 20000;
+
+export function setbonusscore(s) {
+  bonusscore = s;
+}
+
+// The score of each Digger (what went over 999999 in tscore), and the next
+// one to get a life at.
+const scdat = Array.from({ length: DIGGERS }, () => ({ score: 0, tscore: 0, nextbs: 0 }));
 
 // High scores of the current kind of game: [{name, score}], best first.
 let table = [];
@@ -51,6 +59,11 @@ function settable(t) {
   while (table.length < TABLE_SIZE) table.push({ name: '...', score: 0 });
 }
 
+// The total score of Digger n.
+export function gettscore(n) {
+  return scdat[n].tscore + scdat[n].score;
+}
+
 export function initscores() {
   for (let i = 0; i < dg.diggers; i++) addscore(i, 0);
 }
@@ -58,7 +71,8 @@ export function initscores() {
 export function zeroscores() {
   for (const s of scdat) {
     s.score = 0;
-    s.nextbs = BONUS_SCORE;
+    s.tscore = 0;
+    s.nextbs = bonusscore;
   }
 }
 
@@ -79,15 +93,18 @@ export function drawscores() {
 export function addscore(n, score) {
   const s = scdat[n];
   s.score += score;
-  if (s.score > 999999) s.score = 0; // the counter wraps around
+  if (s.score > 999999) {
+    s.tscore += s.score;
+    s.score = 0;
+  }
   writenum(s.score, scorex(n), 0, 6, 1);
   if (s.score >= s.nextbs + n) { // +n to reproduce original bug
     if (getlives(n) < 5) {
-      if (dg.gauntlet) dg.cgtime += 15000; // 15 second time bonus instead of the life
+      if (dg.gauntlet) dg.cgtime += 15 * GAUNTLET_SECOND; // time bonus instead of the life
       else addlife(n);
       drawlives();
     }
-    s.nextbs += BONUS_SCORE;
+    s.nextbs += bonusscore;
   }
   incpenalty();
   incpenalty();
@@ -96,6 +113,7 @@ export function addscore(n, score) {
 
 export async function endofgame() {
   for (let i = 0; i < dg.diggers; i++) addscore(i, 0);
+  if (dg.playing) return; // no high scores for playbacks
   if (dg.gauntlet) {
     cleartopline();
     outtext('TIME UP', 120, 0, 3);
@@ -157,6 +175,7 @@ async function getinitials() {
   scr.clear();
   scr.pal(0);
   scr.inten(0);
+  recputinit(name.join(''));
   return name.join('');
 }
 

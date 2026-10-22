@@ -5,9 +5,9 @@ import * as spr from './sprite.js';
 import {
   dg, MWIDTH, MHEIGHT, MSIZE, BAGS, MONSTERS, DIGGERS, FIREBALLS, FIRSTBAG,
   FIRSTMONSTER, FIRSTDIGGER, LASTDIGGER, FIRSTBONUS, LASTBONUS, FIRSTFIREBALL,
-  LASTFIREBALL, div,
+  LASTFIREBALL, GAUNTLET_SECOND, div,
 } from './state.js';
-import { getlevch, levplan, redrawdelay } from './main.js';
+import { getlevch, levplan, redrawdelay, incpenalty } from './main.js';
 import { getlives } from './digger.js';
 
 // What is dug out of each cell: bits 0-4 the horizontal tunnel, 6-11 the
@@ -98,6 +98,7 @@ export function eatfield(x, y, dir) {
   let h = div(x - 12, 20), xr = div((x - 12) % 20, 4);
   let v = div(y - 18, 18), yr = div((y - 18) % 18, 3);
   let i;
+  incpenalty();
   switch (dir) {
     case 0: // right
       h++;
@@ -273,7 +274,7 @@ export function drawdigger(n, t, x, y, f) {
 
 export function drawlives() {
   if (dg.gauntlet) {
-    const g = Math.max(0, Math.floor(dg.cgtime / 1000));
+    const g = Math.max(0, Math.floor(dg.cgtime / GAUNTLET_SECOND));
     const s = `${Math.floor(g / 60)}`.padStart(3) + ':' + `${g % 60}`.padStart(2, '0');
     outtext(s, 124, 0, 3);
     return;

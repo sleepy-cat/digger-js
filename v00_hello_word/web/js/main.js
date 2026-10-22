@@ -3,13 +3,13 @@
 import * as scr from './screen.js';
 import * as snd from './sound.js';
 import * as input from './input.js';
-import { dg, leveldat } from './state.js';
+import { dg, leveldat, GAUNTLET_SECOND } from './state.js';
 import {
   outtext, erasetext, makefield, drawstatics, savefield, creatembspr, initmbspr, drawlives,
 } from './drawing.js';
 import {
   initdigger, dodigger, erasediggers, killfire, erasebonus, countem, makeemfield,
-  drawemeralds, isalive, digalive, getlives, initlives, declife, deathffwd,
+  drawemeralds, isalive, digalive, getlives, initlives, declife, deathffwd, dirgehold,
 } from './digger.js';
 import { initmonsters, domonsters, erasemonsters, monleft, incmont } from './monster.js';
 import { initbags, drawbags, dobags, cleanupbags, getnmovingbags } from './bags.js';
@@ -138,7 +138,7 @@ function getalllives() {
 async function game() {
   let flashplayer = false;
   if (dg.gauntlet) {
-    dg.cgtime = dg.gtime * 1000;
+    dg.cgtime = dg.gtime * GAUNTLET_SECOND;
     dg.timeout = false;
   }
   initlives();
@@ -192,6 +192,7 @@ async function game() {
         penalty = 0;
         await newframe();
         if (dg.escape || dg.timeout) break;
+        while (dirgehold() && snd.dirgeplaying() && !dg.escape) await sleep(10);
         dodigger();
         domonsters();
         dobags();

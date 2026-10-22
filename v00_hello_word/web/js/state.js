@@ -32,6 +32,11 @@ export const MSIZE = MWIDTH * MHEIGHT;
 // Milliseconds in one frame (game tick) at the default speed, 12.5Hz.
 export const DEFAULT_FTIME = 80;
 
+// The gauntlet clock of the original: it runs at 1193181 a second (the PC
+// timer) and goes down by 80000 a tick, so 120 seconds last 1790 ticks.
+export const GAUNTLET_SECOND = 1193181;
+export const GAUNTLET_TICK = 80000;
+
 export const dg = {
   nplayers: 1,
   diggers: 1,
@@ -39,7 +44,7 @@ export const dg = {
   startlev: 1,
   gauntlet: false,
   gtime: 120, // gauntlet time, seconds
-  cgtime: 0, // gauntlet time left, ms
+  cgtime: 0, // gauntlet time left, see GAUNTLET_SECOND
   timeout: false,
   ftime: DEFAULT_FTIME,
   randv: 0,
